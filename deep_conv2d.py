@@ -13,6 +13,9 @@ class DeepConv2dMNIST(ClassifierNetwork):
                  first_layer_features=33,
                  second_layer_features=10,
                  learn_rate = tf.constant(1e-2)):
+        """
+        Initializes a network of this type with the given layer feature sizes and learn rate
+        """
         self.x = tf.placeholder('float', [None, 28, 28, 1])
         self.rubric = tf.placeholder('float', [None, 10])
         self.keep_prob = tf.constant(1.0)
