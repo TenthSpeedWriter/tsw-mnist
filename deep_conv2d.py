@@ -17,7 +17,7 @@ class DeepConv2dMNIST(ClassifierNetwork):
         Initializes a network of this type with the given layer feature sizes and learn rate
         """
         self.x = tf.placeholder('float', [None, 28, 28, 1])
-        self.rubric = tf.placeholder('float', [None, 10])
+        self.rubric = tf.placeholder('float', [None, 1])
         self.keep_prob = tf.constant(1.0)
         
         conv2d_0 = Conv2dEluLayer(self.x, first_layer_features,
@@ -33,11 +33,34 @@ class DeepConv2dMNIST(ClassifierNetwork):
         self.learn_rate = learn_rate
         self.trainer = tf.train.AdamOptimizer(self.learn_rate).minimize(self.cost)
         
-        self.correct_classifications = tf.equal(tf.argmax(self.y, 1),
-                                                tf.argmax(self.rubric, 1))
+        self.correct_classifications = tf.equal(tf.cast(tf.argmax(self.y, 1), 'float'),
+                                                self.rubric)
         self.accuracy = tf.reduce_mean(tf.cast(self.correct_classifications, 'float'))
     
-    
+
+print "\nInitializing session.\n"
 sess = tf.InteractiveSession()
+
+print "\nConstructing network."
 network = DeepConv2dMNIST()
+
+print "\nLoading source data."
+source = MNIST_Source()
+
+TEST_BATCHES = 2500
+LEARN_RATE_MAX = 1e-2
+LEARN_RATE_MIN = 1e-4
+
+sess.run(tf.initialize_all_variables())
+for i in range(TEST_BATCHES):
+    data, labels = source.next_train_batch()
+    print data
+    print labels
+    tweened_learn_rate = LEARN_RATE_MAX - float(i/TEST_BATCHES)*(LEARN_RATE_MAX - LEARN_RATE_MIN)
+    print tweened_learn_rate
+    if i%25 == 0 and i != 0:
+        print "Iteration {0}\n\tBatch Accuracy: {1}%".format(str(i),
+                                                             str(100*network.accuracy_on_set(data, labels)))
+    network.train(data, labels)
+
 sess.close()

@@ -14,7 +14,7 @@ class ClassifierNetwork:
         return -tf.reduce_sum(rubric * tf.log(clipped_y))
     
     def train(self, data, rubric,
-              learn_rate=tf.constant(1e-2),
+              learn_rate=1e-2,
               keep_prob=1.0):
         """
         Runs a single training pass on this network given the specified data and rubric.

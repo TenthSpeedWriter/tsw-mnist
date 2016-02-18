@@ -14,7 +14,7 @@ class SoftmaxFlatLayer:
         as well as a specified dropout keep_prob (default 1 if feature is not explicitly used).
         """
         x_shape = [int(dim) for dim in x.get_shape()[1:]]
-        x_flat_shape = [-1] + [tf.reduce_prod(x_shape).eval().tolist()]
+        x_flat_shape = [-1] + [int(tf.reduce_prod(x_shape).eval())]
         
         self.x = x
         self.x_flat = tf.nn.dropout(tf.reshape(self.x, x_flat_shape), keep_prob)
