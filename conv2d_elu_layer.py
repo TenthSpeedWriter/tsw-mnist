@@ -6,12 +6,15 @@ class Conv2dEluLayer:
     """
     def __init__(self, x, output_features,
                  conv_filter=None, bias=None,
-                 conv_window=(5, 5)):
+                 conv_window=(5, 5),
+                 keep_prob=tf.constant(1.0)):
         """
         Must be initialized with tensor x and the desired number of output features.
         
         May be initialized with existing tf.Variables as its conv_filter and bias,
         though conv_window will be ignored in favor of the existing conv_filter shape.
+        
+        May be initialized with a dropout keep_prob; defaults to 1 if feature is not explicitly used.
         """
         self.x, self.out_channels, self.conv_window = (x,
                                                        output_features,
@@ -20,7 +23,7 @@ class Conv2dEluLayer:
         self.conv_filter = conv_filter if conv_filter else self._new_filter()
         self.bias = bias if bias else self._new_bias()
         
-        self.conv2d = tf.nn.conv2d(self.x, self.conv_filter,
+        self.conv2d = tf.nn.conv2d(tf.nn.dropout(self.x, keep_prob), self.conv_filter,
                                    strides=[1, 1, 1, 1],
                                    padding='SAME')
         

@@ -9,15 +9,19 @@ class DeepConv2dMNIST:
     A deep network of two conv2d elu and one flat softmax layers with specified feature sizes and variable learn rate.
     """
     def __init__(self,
-                 first_layer_features=12,
-                 second_layer_features=33,
+                 first_layer_features=33,
+                 second_layer_features=10,
                  learn_rate = tf.constant(1e-2)):
         self.x = tf.placeholder('float', [None, 28, 28, 1])
         self.rubric = tf.placeholder('float', [None, 10])
+        self.keep_prob = tf.constant(1.0)
         
-        conv2d_0 = Conv2dEluLayer(self.x, first_layer_features)
-        conv2d_1 = Conv2dEluLayer(conv2d_0.y, second_layer_features)
-        classifier = SoftmaxFlatLayer(conv2d_1.y, 10)
+        conv2d_0 = Conv2dEluLayer(self.x, first_layer_features,
+                                  keep_prob=self.keep_prob)
+        conv2d_1 = Conv2dEluLayer(conv2d_0.y, second_layer_features,
+                                  keep_prob=self.keep_prob)
+        classifier = SoftmaxFlatLayer(conv2d_1.y, 10,
+                                      keep_prob=self.keep_prob)
         
         self.y = classifier.y
         
@@ -63,5 +67,5 @@ class DeepConv2dMNIST:
         return self.accuracy.eval(feed_dict=feed_dict)
     
 sess = tf.InteractiveSession()
-foo = DeepConv2dMNIST()
+network = DeepConv2dMNIST()
 sess.close()
