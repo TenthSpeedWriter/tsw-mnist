@@ -18,7 +18,7 @@ class ClassifierNetwork:
               keep_prob=1.0):
         """
         Runs a single training pass on this network given the specified data and rubric.
-        Allows for a specified keep_prob in (0, 1] to reduce
+        Allows for a specified keep_prob in (0, 1] to reduce overfitting.
         """
         if keep_prob <= 0 or keep_prob > 1:
             err_str = "Keep prob must be >0 and <= 1 (given {0})".format(str(keep_prob))
