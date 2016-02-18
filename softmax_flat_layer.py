@@ -27,9 +27,9 @@ class SoftmaxFlatLayer:
         self.y = tf.nn.softmax(self.features)
     
     def _new_weight(self):
-        weight_shape = (int(self.x_flat.get_shape()[-1]), self._output_features)
+        weight_shape = [int(self.x_flat.get_shape()[-1]), self._output_features]
         return tf.Variable(tf.zeros(weight_shape))
     
     def _new_bias(self):
-        bias_shape = (self._output_features)
+        bias_shape = [self._output_features]
         return tf.Variable(tf.zeros(bias_shape))

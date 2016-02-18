@@ -54,13 +54,11 @@ LEARN_RATE_MIN = 1e-4
 sess.run(tf.initialize_all_variables())
 for i in range(TEST_BATCHES):
     data, labels = source.next_train_batch()
-    print data
-    print labels
     tweened_learn_rate = LEARN_RATE_MAX - float(i/TEST_BATCHES)*(LEARN_RATE_MAX - LEARN_RATE_MIN)
-    print tweened_learn_rate
     if i%25 == 0 and i != 0:
-        print "Iteration {0}\n\tBatch Accuracy: {1}%".format(str(i),
-                                                             str(100*network.accuracy_on_set(data, labels)))
+        print "Iteration {0}\n\tBatch Accuracy: {1}%\n\tLearn rate: {2}".format(str(i),
+                                                                                str(100*network.accuracy_on_set(data, labels)),
+                                                                                str(tweened_learn_rate))
     network.train(data, labels)
 
 sess.close()
