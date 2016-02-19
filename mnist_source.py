@@ -41,7 +41,7 @@ class MNIST_Source:
         self.train_labels = np.reshape(test_set[1], [-1, 1])
         
         self.test_data = np.reshape(test_set[0], IMAGE_SHAPE)
-        self.test_labels = np.reshape(test_set[1], [-1, 10])
+        self.test_labels = np.reshape(test_set[1], [-1, 1])
         
         self._next_train_batch, self._next_test_batch = 0, 0
         self.training_epochs = 0
@@ -59,6 +59,7 @@ class MNIST_Source:
             self.training_epochs += 1
         else:
             self._next_train_batch += self.batch_size
+        
         return batch_data, batch_labels
     
     def next_test_batch(self):

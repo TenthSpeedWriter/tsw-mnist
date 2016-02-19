@@ -1,3 +1,4 @@
+import numpy as np
 import tensorflow as tf
 from mnist_source import MNIST_Source
 from conv2d_elu_layer import Conv2dEluLayer
@@ -10,7 +11,7 @@ class DeepConv2dMNIST(ClassifierNetwork):
     A deep network of two conv2d elu and one flat softmax layers with specified feature sizes and variable learn rate.
     """
     def __init__(self,
-                 first_layer_features=33,
+                 first_layer_features=10,
                  second_layer_features=10,
                  learn_rate = tf.constant(1e-2)):
         """
@@ -45,16 +46,16 @@ print "\nConstructing network."
 network = DeepConv2dMNIST()
 
 print "\nLoading source data."
-source = MNIST_Source()
+source = MNIST_Source(batch_size=10)
 
 TEST_BATCHES = 2500
-LEARN_RATE_MAX = 1e-2
-LEARN_RATE_MIN = 1e-4
+LEARN_RATE_MAX = np.float64(1e-2)
+LEARN_RATE_MIN = np.float64(1e-4)
 
 sess.run(tf.initialize_all_variables())
 for i in range(TEST_BATCHES):
     data, labels = source.next_train_batch()
-    tweened_learn_rate = LEARN_RATE_MAX - float(i/TEST_BATCHES)*(LEARN_RATE_MAX - LEARN_RATE_MIN)
+    tweened_learn_rate = np.float64(LEARN_RATE_MAX - (np.float64(i)/np.float64(TEST_BATCHES))*(LEARN_RATE_MAX - LEARN_RATE_MIN))
     if i%25 == 0 and i != 0:
         print "Iteration {0}\n\tBatch Accuracy: {1}%\n\tLearn rate: {2}".format(str(i),
                                                                                 str(100*network.accuracy_on_set(data, labels)),

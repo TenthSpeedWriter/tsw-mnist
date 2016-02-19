@@ -1,5 +1,7 @@
+import numpy as np
 import tensorflow as tf
 
+float64 = np.float64
 
 class ClassifierNetwork:
     @staticmethod
@@ -10,7 +12,7 @@ class ClassifierNetwork:
         
         I hypothesize that this will make the training process slower yet more stable; we'll find out.
         """
-        clipped_y = tf.clip_by_value(y, 1e-9, 1.0 - 1e-9)
+        clipped_y = tf.clip_by_value(y, float64(1e-9), (float64(1.0) - float64(1e-9)))
         return -tf.reduce_sum(rubric * tf.log(clipped_y))
     
     def train(self, data, rubric,
