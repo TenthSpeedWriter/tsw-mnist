@@ -1,5 +1,4 @@
 import numpy as np
-import tensorflow as tf
 
 
 class MNIST_Source:
@@ -38,25 +37,21 @@ class MNIST_Source:
         self.batch_size = batch_size
         train_set, test_set = self.unpickled_data()
         
-        self.train_data = tf.reshape(train_set[0], IMAGE_SHAPE).eval()
-        self.train_labels = tf.reshape(test_set[1], [-1, 1])
+        self.train_data = np.reshape(train_set[0], IMAGE_SHAPE)
+        self.train_labels = np.reshape(test_set[1], [-1, 1])
         
-        self.test_data, self.test_labels = (tf.reshape(test_set[0], IMAGE_SHAPE).eval(),
-                                            tf.reshape(test_set[1], [-1, 10]).eval())
+        self.test_data = np.reshape(test_set[0], IMAGE_SHAPE)
+        self.test_labels = np.reshape(test_set[1], [-1, 10])
         
         self._next_train_batch, self._next_test_batch = 0, 0
         self.training_epochs = 0
     
     def next_train_batch(self):
-        sliced_img_shape = [28, 28, 1]
+        this_start = self._next_train_batch
+        next_start = this_start + self.batch_size
         
-        data_beginning = [self._next_train_batch, 0, 0, 0]
-        data_slice_size = [self.batch_size] + sliced_img_shape
-        batch_data = tf.slice(self.train_data, data_beginning, data_slice_size)
-        
-        label_beginning = [self._next_train_batch, 0]
-        label_slice_size = [self.batch_size, 1]
-        batch_labels = tf.slice(self.train_labels, label_beginning, label_slice_size)
+        batch_data = self.train_data[this_start:next_start]
+        batch_labels = self.train_labels[this_start:next_start]
         
         if self._next_train_batch == 50000 - self.batch_size:
             print "Training epoch reached. Reverting to beginning of training set."
@@ -64,7 +59,7 @@ class MNIST_Source:
             self.training_epochs += 1
         else:
             self._next_train_batch += self.batch_size
-        return batch_data.eval(), batch_labels.eval()
+        return batch_data, batch_labels
     
     def next_test_batch(self):
         """
@@ -74,15 +69,12 @@ class MNIST_Source:
             print "Test records exhausted."
             return -1, -1
         
-        sliced_img_shape = [28, 28, 1]
+        this_start = self._next_train_batch
+        next_start = this_start + self.batch_size
         
-        data_beginning = [self._next_test_batch, 0, 0, 0]
-        data_slice_size = [self.batch_size] + sliced_img_shape
-        batch_data = tf.slice(self.test_data, data_beginning, data_slice_size)
-        
-        label_beginning = [self._next_test_batch, 0]
-        label_slice_size = [self.batch_size, 1]
-        batch_labels = tf.slice(self.test_labels, label_beginning, label_slice_size)
+        batch_data = self.test_data[this_start:next_start]
+        batch_labels = self.test_labels[this_start:next_start]
         
         self._next_train_batch += self.batch_size
-        return batch_data.eval(), batch_labels.eval()
+        
+        return batch_data, batch_labels
